@@ -1,0 +1,62 @@
+{
+  "Funds": [
+    {
+      "Id": 0,
+      "Name": "Handelsbanken Hållbar Energi A1 SEK",
+      "DisplayName": "Hållbar Energi",
+      "FundCompany": "Handelsbanken",
+      "ParserName": "Morningstar",
+      "LatestRate": 403.03,
+      "Shares": 42.9074,
+      "PurchasePrice": 20000,
+      "Identifier": "F00000UI2B"
+    },
+    {
+      "Id": 1,
+      "Name": "Swedbank Robur Ny Teknik A",
+      "DisplayName": "Ny Teknik",
+      "FundCompany": "Swedbank",
+      "ParserName": "Morningstar",
+      "LatestRate": 1805.16,
+      "Shares": 10.4571,
+      "PurchasePrice": 20000,
+      "Identifier": "F0GBR04KDE"
+    },
+    {
+      "Id": 2,
+      "Name": "Swedbank Robur Småbolagsfond Europa A",
+      "DisplayName": "Småbolagsfond Europa",
+      "FundCompany": "Swedbank",
+      "ParserName": "Morningstar",
+      "LatestRate": 55.07,
+      "Shares": 343.112,
+      "PurchasePrice": 20000,
+      "Identifier": "F0GBR04LSC"
+    },
+    {
+      "Id": 3,
+      "Name": "Swedbank Robur Globalfond I",
+      "DisplayName": "Globalfond",
+      "FundCompany": "Swedbank",
+      "ParserName": "Morningstar",
+      "LatestRate": 33.46,
+      "Shares": 556.502,
+      "PurchasePrice": 20000,
+      "Identifier": "F00001476G"
+    },
+    {
+      "Id": 4,
+      "Name": "Swedbank Robur Asienfond A",
+      "DisplayName": "Asienfond",
+      "FundCompany": "Swedbank",
+      "ParserName": "Morningstar",
+      "LatestRate": 76.88,
+      "Shares": 237.897,
+      "PurchasePrice": 20000,
+      "Identifier": "F0GBR04LRU"
+    }
+  ],
+  "TotalPurchasePrice": 100000,
+  "TotalValue": 91974.96417800001,
+  "ProfitLossPercent": -8.025035821999992
+}
