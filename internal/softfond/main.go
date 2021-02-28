@@ -10,13 +10,6 @@ import (
 	"os"
 )
 
-const (
-	applicationDescription = "SoftFond hämtar fonddata från internet..."
-	applicationTitle       = "SoftFond"
-	applicationVersion     = "Version 0.1.0"
-	applicationCopyRight   = "© SoftTeam AB, 2021"
-)
-
 type MainForm struct {
 	Window      *gtk.ApplicationWindow
 	Helper      *gtkHelper.GtkHelper
@@ -94,9 +87,10 @@ func (m *MainForm) OpenMainForm(app *gtk.Application) {
 	}
 	m.TreeView = treeView
 
-	m.FundList = FundListNew(m)
-	m.FundList.SetupColumns()
-	m.FundList.Refresh()
+	// Setup fund list
+	m.FundList = fundListNew(m)
+	m.FundList.setupColumns()
+	m.FundList.refreshFundList()
 
 	// Show the main window
 	window.ShowAll()

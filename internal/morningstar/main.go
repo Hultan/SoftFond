@@ -18,11 +18,13 @@ const (
 type Morningstar struct {
 }
 
-func NewMorningStar() *Morningstar {
+// New : Creates a new MorningStar struct
+func New() *Morningstar {
 	return new(Morningstar)
 }
 
-func (m *Morningstar) GetFundValue(fund *data.Fund) error {
+// GetFundRate : Gets todays fund rate from MorningStar.se
+func (m *Morningstar) GetFundRate(fund *data.Fund) error {
 	// Request the HTML page.
 	url := strings.Replace(constUrl, "{FundId}", fund.Identifier, 1)
 	res, err := http.Get(url)
@@ -58,9 +60,10 @@ func (m *Morningstar) GetFundValue(fund *data.Fund) error {
 }
 
 func (m *Morningstar) PrintFund(fund *data.Fund) {
-	fmt.Printf("%.30s : %9.4f (%s) %s\n", fund.NameFormat(30), fund.LatestRate, fund.BuyingRateFormat(), fund.ProfitLossPercentFormat(fund.LatestRate))
+	fmt.Printf("%.30s : %9.4f (%s) %s\n", fund.NameFormat(30), fund.LatestRate, fund.BuyingRateFormat(), fund.ProfitLossPercentFormat())
 }
 
+// Todo : Move out
 func (m *Morningstar) GetFundsValue(funds *data.Funds) {
 	funds.TotalPurchasePrice = 0
 	funds.TotalValue = 0

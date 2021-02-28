@@ -26,6 +26,13 @@ type Fund struct {
 	Identifier    string  `json:"Identifier"`
 }
 
+// FundsNew : Create a new funds struct
+func FundsNew() *Funds {
+	f := new(Funds)
+	return f
+}
+
+// Load : Load funds from a json file
 func (f *Funds) Load() error {
 	bytes, err := ioutil.ReadFile("config/funds.json")
 	if err != nil {
@@ -40,6 +47,7 @@ func (f *Funds) Load() error {
 	return nil
 }
 
+// Save : Save funds to a json file
 func (f *Funds) Save() error {
 	bytes, err := json.MarshalIndent(f, "", "  ")
 	if err != nil {

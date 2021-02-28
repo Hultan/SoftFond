@@ -5,12 +5,12 @@ import (
 	"log"
 )
 
-// TreeviewHelper : A helper class for a gtk treeview
-type TreeviewHelper struct {
+// treeviewHelper : A helper class for a gtk treeview
+type treeviewHelper struct {
 }
 
-// CreateTextColumn : Add a column to the tree view (during the initialization of the tree view)
-func (t *TreeviewHelper) CreateTextColumn(title string, id int, width int) *gtk.TreeViewColumn {
+// createTextColumn : Add a column to the tree view (during the initialization of the tree view)
+func (t *treeviewHelper) createTextColumn(title string, id int, width int) *gtk.TreeViewColumn {
 	cellRenderer, err := gtk.CellRendererTextNew()
 	if err != nil {
 		log.Fatal("Unable to create text cell renderer:", err)
@@ -20,7 +20,7 @@ func (t *TreeviewHelper) CreateTextColumn(title string, id int, width int) *gtk.
 	if err != nil {
 		log.Fatal("Unable to create cell column:", err)
 	}
-	column.AddAttribute(cellRenderer, "background", ColumnBackground)
+	column.AddAttribute(cellRenderer, "background", columnBackground)
 
 	if width<0 {
 		column.SetExpand(true)
@@ -31,8 +31,8 @@ func (t *TreeviewHelper) CreateTextColumn(title string, id int, width int) *gtk.
 	return column
 }
 
-// CreateImageColumn : Add a column to the tree view (during the initialization of the tree view)
-func (t *TreeviewHelper) CreateImageColumn(title string, imageColumn int, width int) *gtk.TreeViewColumn {
+// createImageColumn : Add a column to the tree view (during the initialization of the tree view)
+func (t *treeviewHelper) createImageColumn(title string, imageColumn int, width int) *gtk.TreeViewColumn {
 	cellRenderer, err := gtk.CellRendererPixbufNew()
 	if err != nil {
 		log.Fatal("Unable to create pixbuf cell renderer:", err)

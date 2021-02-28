@@ -1,3 +1,6 @@
+//
+// NOT USED!!!!
+//
 package swedbank
 
 import (
@@ -54,7 +57,7 @@ func (s *Swedbank) GetTodaysRate(fund *data.Fund) {
 }
 
 func (s *Swedbank) PrintFund(fund *data.Fund) {
-	fmt.Printf("%.30s : %9.4f (%s) %s\n", fund.NameFormat(30), fund.LatestRate, fund.BuyingRateFormat(), fund.ProfitLossPercentFormat(fund.LatestRate))
+	fmt.Printf("%.30s : %9.4f (%s) %s\n", fund.NameFormat(30), fund.LatestRate, fund.BuyingRateFormat(), fund.ProfitLossPercentFormat())
 }
 
 func (s *Swedbank) CalculateFundsTotal(funds *data.Funds) {

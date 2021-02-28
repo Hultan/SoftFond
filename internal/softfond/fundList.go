@@ -13,27 +13,28 @@ type fundList struct {
 	listStore *gtk.ListStore
 }
 
-const (
-	ColumnTrend = iota
-	ColumnName
-	ColumnValue
-	ColumnBackground
-)
-
-const (
-	ColumnTrendWidth = 64
-	ColumnNameWidth  = -1
-	ColumnValueWidth = 200
-)
-
-func FundListNew(mainForm *MainForm) *fundList {
+// fundListNew : Creates a new fundList struct
+func fundListNew(mainForm *MainForm) *fundList {
 	f := new(fundList)
 	f.mainForm = mainForm
 	return f
 }
 
-// Refresh : Refreshes the video list
-func (f *fundList) Refresh() {
+func (f *fundList) refreshFundList() {
+
+	funds := data.FundsNew()
+
+	// Load
+	err := funds.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	f.refresh(funds)
+}
+
+// refresh : Refreshes the video list
+func (f *fundList) refresh(funds *data.Funds) {
 	var err error
 
 	if f.listStore != nil {
@@ -51,14 +52,6 @@ func (f *fundList) Refresh() {
 		log.Fatal(err)
 	}
 
-	funds := data.NewFunds()
-
-	// Load
-	err = funds.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	for _, fund := range funds.List {
 		f.addFundToList(fund, f.listStore)
 	}
@@ -69,7 +62,7 @@ func (f *fundList) Refresh() {
 func (f *fundList) addFundToList(fund *data.Fund, listStore *gtk.ListStore) {
 	// Append fund to list
 	iter := listStore.Append()
-	err := listStore.Set(iter, []int{ColumnTrend, ColumnName, ColumnValue, ColumnBackground},
+	err := listStore.Set(iter, []int{columnTrend, columnName, columnValue, columnBackground},
 		[]interface{}{
 			f.getTrendImageColumn(fund),
 			f.getNameColumn(fund),
@@ -82,12 +75,12 @@ func (f *fundList) addFundToList(fund *data.Fund, listStore *gtk.ListStore) {
 	}
 }
 
-// SetupColumns : Sets up the listview columns
-func (f *fundList) SetupColumns() {
-	helper := new(TreeviewHelper)
-	f.mainForm.TreeView.AppendColumn(helper.CreateImageColumn("Trend", ColumnTrend, ColumnTrendWidth))
-	f.mainForm.TreeView.AppendColumn(helper.CreateTextColumn("Fondnamn", ColumnName, ColumnNameWidth))
-	f.mainForm.TreeView.AppendColumn(helper.CreateTextColumn("Värde", ColumnValue, ColumnValueWidth))
+// setupColumns : Sets up the listview columns
+func (f *fundList) setupColumns() {
+	helper := new(treeviewHelper)
+	f.mainForm.TreeView.AppendColumn(helper.createImageColumn("Trend", columnTrend, columnTrendWidth))
+	f.mainForm.TreeView.AppendColumn(helper.createTextColumn("Fondnamn", columnName, columnNameWidth))
+	f.mainForm.TreeView.AppendColumn(helper.createTextColumn("Värde", columnValue, columnValueWidth))
 }
 
 func (f *fundList) getTrendImageColumn(fund *data.Fund) *gdk.Pixbuf {
