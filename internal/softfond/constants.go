@@ -11,12 +11,14 @@ const (
 	columnTrend = iota
 	columnName
 	columnValue
+	columnProfitLoss
 	columnBackground
 )
 
 const (
 	columnTrendWidth = 64
 	columnNameWidth  = -1
-	columnValueWidth = 200
+	columnValueWidth = 140
+	columnProfitLossWidth = 100
 )
 
