@@ -76,6 +76,3 @@ func (m *Morningstar) GetFundsValue(funds *data.Funds) {
 func (m *Morningstar) PrintFunds(funds *data.Funds) {
 	fmt.Printf("PURCHASE PRICE : %v\tVALUE : %v\tPROFIT/LOSS : %v%%", funds.TotalPurchasePrice, funds.TotalValue, funds.ProfitLossPercent)
 }
-//
-// PRIVATE FUNCTIONS
-//

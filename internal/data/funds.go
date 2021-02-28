@@ -56,8 +56,8 @@ func (f *Fund) BuyingRate() float64 {
 	return f.PurchasePrice / f.Shares
 }
 
-func (f *Fund) ProfitLossPercent(rate float64) float64 {
-	return rate/f.BuyingRate()*100 - 100
+func (f *Fund) ProfitLossPercent() float64 {
+	return f.LatestRate/f.BuyingRate()*100 - 100
 }
 
 func (f *Fund) NameFormat(maxLength int) string {
@@ -69,10 +69,22 @@ func (f *Fund) NameFormat(maxLength int) string {
 	return string(name[0:maxLength])
 }
 
+func (f *Fund) LatestRateFormat() string {
+	return fmt.Sprintf("%9.4f", f.LatestRate)
+}
+
 func (f *Fund) BuyingRateFormat() string {
 	return fmt.Sprintf("%9.4f", f.BuyingRate())
 }
 
-func (f *Fund) ProfitLossPercentFormat(rate float64) string {
-	return fmt.Sprintf("%6.2f", f.ProfitLossPercent(rate))
+func (f *Fund) PurchasePriceFormat() string {
+	return fmt.Sprintf("%.0f SEK", f.PurchasePrice)
+}
+
+func (f *Fund) CurrentValueFormat() string {
+	return fmt.Sprintf("%.0f SEK", f.LatestRate * f.Shares)
+}
+
+func (f *Fund) ProfitLossPercentFormat() string {
+	return fmt.Sprintf("%6.2f%%", f.ProfitLossPercent())
 }

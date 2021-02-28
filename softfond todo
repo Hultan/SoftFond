@@ -1,0 +1,3 @@
+* Flytta ur GetFundsValue och PrintFunds från MorningStar
+* Fixa så att man kan hämta nya fonddata från GUI:t
+* Lägg till ProfitLossPercent i listan
