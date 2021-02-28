@@ -58,14 +58,14 @@ func (m *MainForm) OpenMainForm(app *gtk.Application) {
 	}
 
 	// Quit button
-	button, err := helper.GetToolButton("main_window_quit_button")
+	button, err := helper.GetToolButton("toolbar_quit")
 	if err != nil {
-		log.Println("Failed to find main_window_quit_button")
+		log.Println("Failed to find toolbar_quit")
 		log.Fatal(err)
 	}
 	_, err = button.Connect("clicked", window.Close)
 	if err != nil {
-		log.Println("Failed to connect the main_window_quit_button.clicked event")
+		log.Println("Failed to connect the toolbar_quit.clicked event")
 		log.Fatal(err)
 	}
 
@@ -91,6 +91,18 @@ func (m *MainForm) OpenMainForm(app *gtk.Application) {
 	m.FundList = fundListNew(m)
 	m.FundList.setupColumns()
 	m.FundList.refreshFundList()
+
+	// Refresh button
+	button, err = helper.GetToolButton("toolbar_refresh")
+	if err != nil {
+		log.Println("Failed to find toolbar_refresh")
+		log.Fatal(err)
+	}
+	_, err = button.Connect("clicked", m.FundList.updateFundsValue)
+	if err != nil {
+		log.Println("Failed to connect the toolbar_refresh.clicked event")
+		log.Fatal(err)
+	}
 
 	// Show the main window
 	window.ShowAll()

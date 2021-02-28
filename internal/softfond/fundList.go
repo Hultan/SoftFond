@@ -5,23 +5,27 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/hultan/softfond/internal/data"
+	"github.com/hultan/softfond/internal/morningstar"
 	"log"
 )
 
 type fundList struct {
 	mainForm  *MainForm
 	listStore *gtk.ListStore
+	funds     *data.Funds
 }
 
 // fundListNew : Creates a new fundList struct
 func fundListNew(mainForm *MainForm) *fundList {
 	f := new(fundList)
 	f.mainForm = mainForm
+
+	f.loadFunds()
+
 	return f
 }
 
-func (f *fundList) refreshFundList() {
-
+func (f *fundList) loadFunds() {
 	funds := data.FundsNew()
 
 	// Load
@@ -30,11 +34,26 @@ func (f *fundList) refreshFundList() {
 		log.Fatal(err)
 	}
 
-	f.refresh(funds)
+	f.funds = funds
+}
+
+func (f *fundList) updateFundsValue() {
+
+	go func() {
+		morningStar := morningstar.New()
+		for _, fund := range f.funds.List {
+			morningStar.GetFundRate(fund)
+		}
+
+		f.funds.Save()
+
+		f.refreshFundList()
+	}()
+
 }
 
 // refresh : Refreshes the video list
-func (f *fundList) refresh(funds *data.Funds) {
+func (f *fundList) refreshFundList() {
 	var err error
 
 	if f.listStore != nil {
@@ -53,7 +72,7 @@ func (f *fundList) refresh(funds *data.Funds) {
 		log.Fatal(err)
 	}
 
-	for _, fund := range funds.List {
+	for _, fund := range f.funds.List {
 		f.addFundToList(fund, f.listStore)
 	}
 
@@ -88,7 +107,7 @@ func (f *fundList) setupColumns() {
 
 func (f *fundList) getTrendImageColumn(fund *data.Fund) *gdk.Pixbuf {
 	var thumbnailPath string
-	if fund.ProfitLossPercent()>=0 {
+	if fund.ProfitLossPercent() >= 0 {
 		thumbnailPath = "assets/trend_up.png"
 	} else {
 		thumbnailPath = "assets/trend_down.png"
@@ -104,7 +123,7 @@ func (f *fundList) getTrendImageColumn(fund *data.Fund) *gdk.Pixbuf {
 
 func (f *fundList) getNameColumn(fund *data.Fund) string {
 	return `<span font="Sans 16"><span foreground="#222222">` + fund.DisplayName + `</span></span>
-<span font="Sans 12"><span foreground="#666666">` + fund.FundCompany +`</span></span>`
+<span font="Sans 12"><span foreground="#666666">` + fund.FundCompany + `</span></span>`
 }
 
 func (f *fundList) getValueColumn(fund *data.Fund) string {
@@ -113,7 +132,7 @@ func (f *fundList) getValueColumn(fund *data.Fund) string {
 }
 
 func (f *fundList) getProfitLossColumn(fund *data.Fund) string {
-	if fund.ProfitLossPercent()>=0 {
+	if fund.ProfitLossPercent() >= 0 {
 		return `<span font="Sans 14"><span foreground="#00FF00">` + fund.ProfitLossPercentFormat() + `</span></span>`
 	}
 	return `<span font="Sans 14"><span foreground="#FF0000">` + fund.ProfitLossPercentFormat() + `</span></span>`

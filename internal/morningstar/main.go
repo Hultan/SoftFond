@@ -56,6 +56,8 @@ func (m *Morningstar) GetFundRate(fund *data.Fund) error {
 		return err
 	}
 
+	fmt.Printf("Fonden '%s' är uppdaterad, dagskurs : %v...\n", fund.Name, fund.LatestRate)
+
 	return nil
 }
 
