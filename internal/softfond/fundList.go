@@ -62,10 +62,12 @@ func (f *fundList) refreshFundList() {
 
 	f.mainForm.TreeView.SetModel(nil)
 	f.listStore, err = gtk.ListStoreNew(
-		gdk.PixbufGetType(),
 		glib.TYPE_STRING, // Fund name
 		glib.TYPE_STRING, // Fund value
+		gdk.PixbufGetType(),
 		glib.TYPE_STRING, // Profit/Loss percent
+		gdk.PixbufGetType(),
+		glib.TYPE_STRING, // Short Term Profit/Loss percent
 		glib.TYPE_STRING, // Background color
 	)
 	if err != nil {
@@ -82,12 +84,14 @@ func (f *fundList) refreshFundList() {
 func (f *fundList) addFundToList(fund *data.Fund, listStore *gtk.ListStore) {
 	// Append fund to list
 	iter := listStore.Append()
-	err := listStore.Set(iter, []int{columnTrend, columnName, columnValue, columnProfitLoss, columnBackground},
+	err := listStore.Set(iter, []int{columnName, columnValue, columnTrend, columnProfitLoss, columnShortTermTrend, columnShortTermProfitLoss, columnBackground},
 		[]interface{}{
-			f.getTrendImageColumn(fund),
 			f.getNameColumn(fund),
 			f.getValueColumn(fund),
-			f.getProfitLossColumn(fund),
+			f.getTrendImageColumn(fund, false),
+			f.getProfitLossColumn(fund, false),
+			f.getTrendImageColumn(fund, true),
+			f.getProfitLossColumn(fund, true),
 			"White",
 		})
 
@@ -99,18 +103,30 @@ func (f *fundList) addFundToList(fund *data.Fund, listStore *gtk.ListStore) {
 // setupColumns : Sets up the listview columns
 func (f *fundList) setupColumns() {
 	helper := new(treeviewHelper)
-	f.mainForm.TreeView.AppendColumn(helper.createImageColumn("Trend", columnTrend, columnTrendWidth))
 	f.mainForm.TreeView.AppendColumn(helper.createTextColumn("Fondnamn", columnName, columnNameWidth))
 	f.mainForm.TreeView.AppendColumn(helper.createTextColumn("Värde", columnValue, columnValueWidth))
-	f.mainForm.TreeView.AppendColumn(helper.createTextColumn("Procent", columnProfitLoss, columnProfitLossWidth))
+	f.mainForm.TreeView.AppendColumn(helper.createImageColumn("Lång", columnTrend, columnTrendWidth))
+	f.mainForm.TreeView.AppendColumn(helper.createTextColumn("Långtids V/F", columnProfitLoss, columnProfitLossWidth))
+	f.mainForm.TreeView.AppendColumn(helper.createImageColumn("Kort", columnShortTermTrend, columnShortTermTrendWidth))
+	f.mainForm.TreeView.AppendColumn(helper.createTextColumn("Korttids V/F", columnShortTermProfitLoss, columnShortTermProfitLossWidth))
 }
 
-func (f *fundList) getTrendImageColumn(fund *data.Fund) *gdk.Pixbuf {
-	var thumbnailPath string
-	if fund.ProfitLossPercent() >= 0 {
-		thumbnailPath = "assets/trend_up.png"
+func (f *fundList) getTrendImageColumn(fund *data.Fund, shortTerm bool) *gdk.Pixbuf {
+	var thumbnailPath string = "assets/trend_up.png"
+
+	if shortTerm {
+		if fund.ShortTermProfitLossPercent() == 0 {
+			thumbnailPath = "assets/trend_none.png"
+		} else if fund.ShortTermProfitLossPercent() < 0 {
+			thumbnailPath = "assets/trend_down.png"
+		}
+
 	} else {
-		thumbnailPath = "assets/trend_down.png"
+		if fund.ProfitLossPercent() == 0 {
+			thumbnailPath = "assets/trend_none.png"
+		} else if fund.ProfitLossPercent() < 0 {
+			thumbnailPath = "assets/trend_down.png"
+		}
 	}
 
 	thumbnail, err := gdk.PixbufNewFromFile(thumbnailPath)
@@ -123,7 +139,7 @@ func (f *fundList) getTrendImageColumn(fund *data.Fund) *gdk.Pixbuf {
 
 func (f *fundList) getNameColumn(fund *data.Fund) string {
 	return `<span font="Sans 16"><span foreground="#222222">` + fund.DisplayName + `</span></span>
-<span font="Sans 12"><span foreground="#666666">` + fund.FundCompany + `</span></span>`
+<span font="Sans 12"><span foreground="#666666">` + fund.FundCompanyName + `</span></span>`
 }
 
 func (f *fundList) getValueColumn(fund *data.Fund) string {
@@ -131,9 +147,20 @@ func (f *fundList) getValueColumn(fund *data.Fund) string {
 <span font="Sans 12"><span foreground="#666666">(` + fund.PurchasePriceFormat() + `)</span></span>`
 }
 
-func (f *fundList) getProfitLossColumn(fund *data.Fund) string {
-	if fund.ProfitLossPercent() >= 0 {
-		return `<span font="Sans 14"><span foreground="#00FF00">` + fund.ProfitLossPercentFormat() + `</span></span>`
+func (f *fundList) getProfitLossColumn(fund *data.Fund, shortTerm bool) string {
+	if shortTerm {
+		if fund.ShortTermProfitLossPercent() == 0 {
+			return `<span font="Sans 14"><span foreground="#000000">` + fund.ShortTermProfitLossPercentFormat() + `</span></span>`
+		} else if fund.ShortTermProfitLossPercent() >= 0 {
+			return `<span font="Sans 14"><span foreground="#00FF00">` + fund.ShortTermProfitLossPercentFormat() + `</span></span>`
+		}
+		return `<span font="Sans 14"><span foreground="#FF0000">` + fund.ShortTermProfitLossPercentFormat() + `</span></span>`
+	} else {
+		if fund.ProfitLossPercent() == 0 {
+			return `<span font="Sans 14"><span foreground="#000000">` + fund.ProfitLossPercentFormat() + `</span></span>`
+		} else if fund.ProfitLossPercent() >= 0 {
+			return `<span font="Sans 14"><span foreground="#00FF00">` + fund.ProfitLossPercentFormat() + `</span></span>`
+		}
+		return `<span font="Sans 14"><span foreground="#FF0000">` + fund.ProfitLossPercentFormat() + `</span></span>`
 	}
-	return `<span font="Sans 14"><span foreground="#FF0000">` + fund.ProfitLossPercentFormat() + `</span></span>`
 }

@@ -27,7 +27,7 @@ func NewSwedbank() *Swedbank {
 
 func (s *Swedbank) GetTodaysRate(fund *data.Fund) {
 	// Request the HTML page.
-	url := strings.Replace(constUrl, "{FundId}", fund.Identifier, 1)
+	url := strings.Replace(constUrl, "{FundId}", fund.FundIdentifier, 1)
 	res, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)

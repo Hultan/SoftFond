@@ -8,17 +8,21 @@ const (
 )
 
 const (
-	columnTrend = iota
-	columnName
+	columnName = iota
 	columnValue
+	columnTrend
 	columnProfitLoss
+	columnShortTermTrend
+	columnShortTermProfitLoss
 	columnBackground
 )
 
 const (
-	columnTrendWidth = 64
 	columnNameWidth  = -1
 	columnValueWidth = 140
+	columnTrendWidth = 66
 	columnProfitLossWidth = 100
+	columnShortTermTrendWidth = 66
+	columnShortTermProfitLossWidth = 100
 )
 

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -26,7 +27,7 @@ func New() *Morningstar {
 // GetFundRate : Gets todays fund rate from MorningStar.se
 func (m *Morningstar) GetFundRate(fund *data.Fund) error {
 	// Request the HTML page.
-	url := strings.Replace(constUrl, "{FundId}", fund.Identifier, 1)
+	url := strings.Replace(constUrl, "{FundId}", fund.FundIdentifier, 1)
 	res, err := http.Get(url)
 	if err != nil {
 		return err
@@ -49,20 +50,28 @@ func (m *Morningstar) GetFundRate(fund *data.Fund) error {
 		return err
 	}
 
-	fund.LatestRate = todaysRate
+	// If enough time has passed, move today to yesterday
+	if time.Now().YearDay() > fund.TodaysUpdateTime.YearDay() {
+		fund.YesterdaysRate = fund.TodaysRate
+		fund.YesterdaysUpdateTime = fund.TodaysUpdateTime
+	}
+
+	// Set todays rate and update time
+	fund.TodaysRate = todaysRate
+	fund.TodaysUpdateTime = time.Now()
 
 	err = res.Body.Close()
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Fonden '%s' är uppdaterad, dagskurs : %v...\n", fund.Name, fund.LatestRate)
+	fmt.Printf("Fonden '%s' är uppdaterad, dagskurs : %v...\n", fund.FundName, fund.TodaysRate)
 
 	return nil
 }
 
 func (m *Morningstar) PrintFund(fund *data.Fund) {
-	fmt.Printf("%.30s : %9.4f (%s) %s\n", fund.NameFormat(30), fund.LatestRate, fund.BuyingRateFormat(), fund.ProfitLossPercentFormat())
+	fmt.Printf("%.30s : %9.4f (%s) %s\n", fund.NameFormat(30), fund.TodaysRate, fund.BuyingRateFormat(), fund.ProfitLossPercentFormat())
 }
 
 // Todo : Move out
@@ -73,7 +82,7 @@ func (m *Morningstar) GetFundsValue(funds *data.Funds) {
 	for id := range funds.List {
 		fund := funds.List[id]
 		funds.TotalPurchasePrice += fund.PurchasePrice
-		funds.TotalValue += fund.Shares * fund.LatestRate
+		funds.TotalValue += fund.Shares * fund.TodaysRate
 	}
 	funds.ProfitLossPercent = funds.TotalValue/funds.TotalPurchasePrice*100 - 100
 }
