@@ -3,6 +3,7 @@ package softfond
 import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/hultan/softfond/internal/data"
 	"github.com/hultan/softfond/internal/tools"
 	gtkHelper "github.com/hultan/softteam-tools/pkg/gtk-helper"
 	"github.com/hultan/softteam-tools/pkg/resources"
@@ -11,11 +12,14 @@ import (
 )
 
 type MainForm struct {
-	Window      *gtk.ApplicationWindow
-	Helper      *gtkHelper.GtkHelper
-	TreeView    *gtk.TreeView
-	AboutDialog *gtk.AboutDialog
-	FundList    *fundList
+	Window             *gtk.ApplicationWindow
+	Helper             *gtkHelper.GtkHelper
+	TreeView           *gtk.TreeView
+	AboutDialog        *gtk.AboutDialog
+	FundsValue         *gtk.Label
+	FundsPurchasePrice *gtk.Label
+	FundsProfitLoss    *gtk.Label
+	FundList           *fundList
 }
 
 // MainFormNew : Creates a new MainForm object
@@ -75,7 +79,7 @@ func (m *MainForm) OpenMainForm(app *gtk.Application) {
 		log.Println("Failed to find main_window_status_bar")
 		log.Fatal(err)
 	}
-	statusBar.Push(statusBar.GetContextId(applicationTitle),  applicationTitle + " " + applicationVersion + ", " + applicationCopyRight)
+	statusBar.Push(statusBar.GetContextId(applicationTitle), applicationTitle+" "+applicationVersion+", "+applicationCopyRight)
 
 	// Menu
 	m.setupMenu(window)
@@ -87,10 +91,33 @@ func (m *MainForm) OpenMainForm(app *gtk.Application) {
 	}
 	m.TreeView = treeView
 
+	// Labels
+	label, err := helper.GetLabel("total_purchase_price_value")
+	if err != nil {
+		log.Println("Failed to find total_purchase_price_value")
+		log.Fatal(err)
+	}
+	m.FundsPurchasePrice = label
+	label, err = helper.GetLabel("total_value")
+	if err != nil {
+		log.Println("Failed to find total_value")
+		log.Fatal(err)
+	}
+	m.FundsValue = label
+	label, err = helper.GetLabel("total_profit_loss_value")
+	if err != nil {
+		log.Println("Failed to find total_profit_loss_value")
+		log.Fatal(err)
+	}
+	m.FundsProfitLoss = label
+
+
 	// Setup fund list
 	m.FundList = fundListNew(m)
 	m.FundList.setupColumns()
 	m.FundList.refreshFundList()
+	m.FundList.funds.CalculateFundsTotalValue()
+	m.updateTotals(m.FundList.funds)
 
 	// Refresh button
 	button, err = helper.GetToolButton("toolbar_refresh")
@@ -167,4 +194,10 @@ func (m *MainForm) openAboutDialog() {
 	}
 
 	m.AboutDialog.Present()
+}
+
+func (m *MainForm) updateTotals(funds *data.Funds) {
+	m.FundsPurchasePrice.SetText(funds.PurchasePriceFormat())
+	m.FundsValue.SetText(funds.ValueFormat())
+	m.FundsProfitLoss.SetText(funds.ProfitLossFormat())
 }

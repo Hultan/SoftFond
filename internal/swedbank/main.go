@@ -66,11 +66,11 @@ func (s *Swedbank) CalculateFundsTotal(funds *data.Funds) {
 		funds.TotalPurchasePrice += fund.PurchasePrice
 		funds.TotalValue += fund.Shares * fund.LatestRate
 	}
-	funds.ProfitLossPercent = funds.TotalValue/funds.TotalPurchasePrice*100 - 100
+	funds.TotalProfitLossPercent = funds.TotalValue/funds.TotalPurchasePrice*100 - 100
 }
 
 func (s *Swedbank) PrintFundsTotal(funds *data.Funds) {
-	fmt.Printf("PURCHASE PRICE : %v\tVALUE : %v\tPROFIT/LOSS : %v%%", funds.TotalPurchasePrice, funds.TotalValue, funds.ProfitLossPercent)
+	fmt.Printf("PURCHASE PRICE : %v\tVALUE : %v\tPROFIT/LOSS : %v%%", funds.TotalPurchasePrice, funds.TotalValue, funds.TotalProfitLossPercent)
 }
 //
 // PRIVATE FUNCTIONS

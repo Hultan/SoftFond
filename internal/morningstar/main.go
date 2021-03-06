@@ -69,24 +69,3 @@ func (m *Morningstar) GetFundRate(fund *data.Fund) error {
 
 	return nil
 }
-
-func (m *Morningstar) PrintFund(fund *data.Fund) {
-	fmt.Printf("%.30s : %9.4f (%s) %s\n", fund.NameFormat(30), fund.TodaysRate, fund.BuyingRateFormat(), fund.ProfitLossPercentFormat())
-}
-
-// Todo : Move out
-func (m *Morningstar) GetFundsValue(funds *data.Funds) {
-	funds.TotalPurchasePrice = 0
-	funds.TotalValue = 0
-
-	for id := range funds.List {
-		fund := funds.List[id]
-		funds.TotalPurchasePrice += fund.PurchasePrice
-		funds.TotalValue += fund.Shares * fund.TodaysRate
-	}
-	funds.ProfitLossPercent = funds.TotalValue/funds.TotalPurchasePrice*100 - 100
-}
-
-func (m *Morningstar) PrintFunds(funds *data.Funds) {
-	fmt.Printf("PURCHASE PRICE : %v\tVALUE : %v\tPROFIT/LOSS : %v%%", funds.TotalPurchasePrice, funds.TotalValue, funds.ProfitLossPercent)
-}

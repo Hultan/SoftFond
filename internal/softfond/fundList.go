@@ -45,6 +45,8 @@ func (f *fundList) updateFundsValue() {
 			morningStar.GetFundRate(fund)
 		}
 
+		f.funds.CalculateFundsTotalValue()
+
 		f.funds.Save()
 
 		f.refreshFundList()
@@ -152,14 +154,14 @@ func (f *fundList) getProfitLossColumn(fund *data.Fund, shortTerm bool) string {
 		if fund.ShortTermProfitLossPercent() == 0 {
 			return `<span font="Sans 14"><span foreground="#000000">` + fund.ShortTermProfitLossPercentFormat() + `</span></span>`
 		} else if fund.ShortTermProfitLossPercent() >= 0 {
-			return `<span font="Sans 14"><span foreground="#00FF00">` + fund.ShortTermProfitLossPercentFormat() + `</span></span>`
+			return `<span font="Sans 14"><span foreground="#00BB00">` + fund.ShortTermProfitLossPercentFormat() + `</span></span>`
 		}
 		return `<span font="Sans 14"><span foreground="#FF0000">` + fund.ShortTermProfitLossPercentFormat() + `</span></span>`
 	} else {
 		if fund.ProfitLossPercent() == 0 {
 			return `<span font="Sans 14"><span foreground="#000000">` + fund.ProfitLossPercentFormat() + `</span></span>`
 		} else if fund.ProfitLossPercent() >= 0 {
-			return `<span font="Sans 14"><span foreground="#00FF00">` + fund.ProfitLossPercentFormat() + `</span></span>`
+			return `<span font="Sans 14"><span foreground="#00BB00">` + fund.ProfitLossPercentFormat() + `</span></span>`
 		}
 		return `<span font="Sans 14"><span foreground="#FF0000">` + fund.ProfitLossPercentFormat() + `</span></span>`
 	}

@@ -3,32 +3,14 @@ package data
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hultan/softfond/internal/tools"
 	"io/ioutil"
-	"time"
 )
 
 type Funds struct {
-	List               []*Fund `json:"Funds"`
-	TotalPurchasePrice float64
-	TotalValue         float64
-	ProfitLossPercent  float64
-}
-
-type Fund struct {
-	Id              int     `json:"Id"`
-	FundName        string  `json:"FundName"`
-	DisplayName     string  `json:"DisplayName"`
-	FundCompanyName string  `json:"FundCompanyName"`
-	ParserName      string  `json:"ParserName"`
-	FundIdentifier  string  `json:"FundIdentifier"`
-	Shares          float64 `json:"Shares"`
-	PurchasePrice   float64 `json:"PurchasePrice"`
-
-	TodaysRate           float64   `json:"TodaysRate"`
-	TodaysUpdateTime     time.Time `json:"TodaysUpdateTime"`
-	YesterdaysRate       float64   `json:"YesterdaysRate"`
-	YesterdaysUpdateTime time.Time `json:"YesterdaysUpdateTime"`
+	List                   []*Fund `json:"Funds"`
+	TotalPurchasePrice     float64
+	TotalValue             float64
+	TotalProfitLossPercent float64
 }
 
 // FundsNew : Create a new funds struct
@@ -65,47 +47,27 @@ func (f *Funds) Save() error {
 	return err
 }
 
-func (f *Fund) BuyingRate() float64 {
-	return f.PurchasePrice / f.Shares
-}
+func (f *Funds) CalculateFundsTotalValue() {
+	f.TotalPurchasePrice = 0
+	f.TotalValue = 0
 
-func (f *Fund) ProfitLossPercent() float64 {
-	return f.TodaysRate/f.BuyingRate()*100 - 100
-}
-
-func (f *Fund) ShortTermProfitLossPercent() float64 {
-	return f.TodaysRate/f.YesterdaysRate*100-100
-}
-
-func (f *Fund) NameFormat(maxLength int) string {
-	name := []rune(f.FundName)
-	l := maxLength - len(name)
-	if l > 0 {
-		return f.FundName + tools.MultiplySpaces(l-1)
+	for id := range f.List {
+		fund := f.List[id]
+		f.TotalPurchasePrice += fund.PurchasePrice
+		f.TotalValue += fund.Shares * fund.TodaysRate
 	}
-	return string(name[0:maxLength])
+	f.TotalProfitLossPercent = f.TotalValue/f.TotalPurchasePrice*100 - 100
 }
 
-func (f *Fund) CurrentRateFormat() string {
-	return fmt.Sprintf("%9.4f", f.TodaysRate)
+func (f *Funds) PurchasePriceFormat() string {
+	return fmt.Sprintf("%.0f SEK", f.TotalPurchasePrice)
 }
 
-func (f *Fund) BuyingRateFormat() string {
-	return fmt.Sprintf("%9.4f", f.BuyingRate())
+func (f *Funds) ValueFormat() string {
+	return fmt.Sprintf("%.0f SEK", f.TotalValue)
 }
 
-func (f *Fund) PurchasePriceFormat() string {
-	return fmt.Sprintf("%.0f SEK", f.PurchasePrice)
+func (f *Funds) ProfitLossFormat() string {
+	return fmt.Sprintf("%6.2f %%", f.TotalProfitLossPercent)
 }
 
-func (f *Fund) CurrentValueFormat() string {
-	return fmt.Sprintf("%.0f SEK", f.TodaysRate*f.Shares)
-}
-
-func (f *Fund) ProfitLossPercentFormat() string {
-	return fmt.Sprintf("%6.2f%%", f.ProfitLossPercent())
-}
-
-func (f *Fund) ShortTermProfitLossPercentFormat() string {
-	return fmt.Sprintf("%6.2f%%", f.ShortTermProfitLossPercent())
-}
