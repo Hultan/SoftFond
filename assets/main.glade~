@@ -184,6 +184,9 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Totalt anskaffnings pris : </property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -197,6 +200,9 @@
                 <property name="can_focus">False</property>
                 <property name="hexpand">True</property>
                 <property name="label" translatable="yes">XXXXX SEK</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>

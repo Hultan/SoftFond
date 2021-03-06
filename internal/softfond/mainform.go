@@ -1,6 +1,7 @@
 package softfond
 
 import (
+	"fmt"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/hultan/softfond/internal/data"
@@ -12,14 +13,18 @@ import (
 )
 
 type MainForm struct {
-	Window             *gtk.ApplicationWindow
-	Helper             *gtkHelper.GtkHelper
-	TreeView           *gtk.TreeView
-	AboutDialog        *gtk.AboutDialog
-	FundsValue         *gtk.Label
-	FundsPurchasePrice *gtk.Label
-	FundsProfitLoss    *gtk.Label
-	FundList           *fundList
+	Window                  *gtk.ApplicationWindow
+	Helper                  *gtkHelper.GtkHelper
+	TreeView                *gtk.TreeView
+	AboutDialog             *gtk.AboutDialog
+	FundsValueLabel         *gtk.Label
+	FundsPurchasePriceLabel *gtk.Label
+	FundsProfitLossLabel    *gtk.Label
+	ToolbarQuit             *gtk.ToolButton
+	ToolbarRefresh          *gtk.ToolButton
+
+	FundList *fundList
+	Funds    *data.Funds
 }
 
 // MainFormNew : Creates a new MainForm object
@@ -34,105 +39,139 @@ func (m *MainForm) OpenMainForm(app *gtk.Application) {
 	gtk.Init(&os.Args)
 
 	// Create a new gtk helper
+	m.Helper = m.createHelper()
+
+	// Controls & signals
+	m.getControls()
+	m.hookUpSignals()
+
+	// Menu
+	m.setupMenu(m.Window)
+
+	// Funds
+	m.loadFunds()
+	m.FundList = fundListNew(m.Funds, m.TreeView)
+	m.updateTotals(m.Funds)
+
+	// Set up main window
+	m.Window.SetApplication(app)
+	m.Window.SetTitle(applicationTitle + " " + applicationVersion)
+
+	// CleanUp
+	m.Helper = nil
+
+	// Show the main window
+	m.Window.ShowAll()
+}
+
+func (m *MainForm) createHelper() *gtkHelper.GtkHelper {
+	return gtkHelper.GtkHelperNew(m.createGuilder())
+}
+
+func (m *MainForm) createGuilder() *gtk.Builder {
 	builder, err := gtk.BuilderNewFromFile(tools.GetResourcePath("../assets", "main.glade"))
 	if err != nil {
 		log.Println("Failed to create builder")
 		log.Fatal(err)
 	}
-	helper := gtkHelper.GtkHelperNew(builder)
-	m.Helper = helper
+	return builder
+}
 
+func (m *MainForm) getControls() {
 	// Get the main window from the glade file
-	window, err := helper.GetApplicationWindow("main_window")
+	window, err := m.Helper.GetApplicationWindow("main_window")
 	if err != nil {
 		log.Println("Failed to find main_window")
 		log.Fatal(err)
 	}
 	m.Window = window
 
-	// Set up main window
-	window.SetApplication(app)
-	window.SetTitle(applicationTitle + " " + applicationVersion)
-
-	// Hook up the destroy event
-	_, err = window.Connect("destroy", window.Close)
-	if err != nil {
-		log.Println("Failed to connect the mainForm.destroy event")
-		log.Fatal(err)
-	}
-
-	// Quit button
-	button, err := helper.GetToolButton("toolbar_quit")
-	if err != nil {
-		log.Println("Failed to find toolbar_quit")
-		log.Fatal(err)
-	}
-	_, err = button.Connect("clicked", window.Close)
-	if err != nil {
-		log.Println("Failed to connect the toolbar_quit.clicked event")
-		log.Fatal(err)
-	}
-
 	// Status bar
-	statusBar, err := helper.GetStatusBar("main_window_status_bar")
+	statusBar, err := m.Helper.GetStatusBar("main_window_status_bar")
 	if err != nil {
 		log.Println("Failed to find main_window_status_bar")
 		log.Fatal(err)
 	}
 	statusBar.Push(statusBar.GetContextId(applicationTitle), applicationTitle+" "+applicationVersion+", "+applicationCopyRight)
 
-	// Menu
-	m.setupMenu(window)
-
 	// Get the tree view
-	treeView, err := helper.GetTreeView("fund_treeview")
+	treeView, err := m.Helper.GetTreeView("fund_treeview")
 	if err != nil {
 		log.Fatal(err)
 	}
 	m.TreeView = treeView
 
 	// Labels
-	label, err := helper.GetLabel("total_purchase_price_value")
+	label, err := m.Helper.GetLabel("total_purchase_price_value")
 	if err != nil {
 		log.Println("Failed to find total_purchase_price_value")
 		log.Fatal(err)
 	}
-	m.FundsPurchasePrice = label
-	label, err = helper.GetLabel("total_value")
+	m.FundsPurchasePriceLabel = label
+	label, err = m.Helper.GetLabel("total_value")
 	if err != nil {
 		log.Println("Failed to find total_value")
 		log.Fatal(err)
 	}
-	m.FundsValue = label
-	label, err = helper.GetLabel("total_profit_loss_value")
+	m.FundsValueLabel = label
+	label, err = m.Helper.GetLabel("total_profit_loss_value")
 	if err != nil {
 		log.Println("Failed to find total_profit_loss_value")
 		log.Fatal(err)
 	}
-	m.FundsProfitLoss = label
+	m.FundsProfitLossLabel = label
 
+	// Toolbar quit button
+	button, err := m.Helper.GetToolButton("toolbar_quit")
+	if err != nil {
+		log.Println("Failed to find toolbar_quit")
+		log.Fatal(err)
+	}
+	m.ToolbarQuit = button
 
-	// Setup fund list
-	m.FundList = fundListNew(m)
-	m.FundList.setupColumns()
-	m.FundList.refreshFundList()
-	m.FundList.funds.CalculateFundsTotalValue()
-	m.updateTotals(m.FundList.funds)
-
-	// Refresh button
-	button, err = helper.GetToolButton("toolbar_refresh")
+	// Toolbar refresh button
+	button, err = m.Helper.GetToolButton("toolbar_refresh")
 	if err != nil {
 		log.Println("Failed to find toolbar_refresh")
 		log.Fatal(err)
 	}
-	_, err = button.Connect("clicked", m.FundList.updateFundsValue)
+	m.ToolbarRefresh = button
+}
+
+func (m *MainForm) hookUpSignals() {
+	// Hook up the destroy event
+	_, err := m.Window.Connect("destroy", m.shutDown)
+	if err != nil {
+		log.Println("Failed to connect the MainForm.destroy event")
+		log.Fatal(err)
+	}
+
+	// Hook up the toolbar quit button clicked signal
+	_, err = m.ToolbarQuit.Connect("clicked", m.shutDown)
+	if err != nil {
+		log.Println("Failed to connect the toolbar_quit.clicked event")
+		log.Fatal(err)
+	}
+
+	// Hook up the toolbar refresh button clicked signal
+	_, err = m.ToolbarRefresh.Connect("clicked", m.FundList.updateFundsValue)
 	if err != nil {
 		log.Println("Failed to connect the toolbar_refresh.clicked event")
 		log.Fatal(err)
 	}
+}
 
-	// Show the main window
-	window.ShowAll()
+func (m *MainForm) loadFunds() {
+	funds := data.FundsNew()
+
+	// Load
+	err := funds.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	m.Funds = funds
+	m.Funds.CalculateFundsTotalValue()
 }
 
 func (m *MainForm) setupMenu(window *gtk.ApplicationWindow) {
@@ -141,7 +180,7 @@ func (m *MainForm) setupMenu(window *gtk.ApplicationWindow) {
 		log.Println("failed to find menu item menu_file_quit")
 		log.Fatal(err)
 	}
-	_, err = menuQuit.Connect("activate", window.Close)
+	_, err = menuQuit.Connect("activate", m.shutDown)
 	if err != nil {
 		log.Println("failed to connect menu_file_quit.activate signal")
 		log.Fatal(err)
@@ -197,7 +236,41 @@ func (m *MainForm) openAboutDialog() {
 }
 
 func (m *MainForm) updateTotals(funds *data.Funds) {
-	m.FundsPurchasePrice.SetText(funds.PurchasePriceFormat())
-	m.FundsValue.SetText(funds.ValueFormat())
-	m.FundsProfitLoss.SetText(funds.ProfitLossFormat())
+	m.FundsPurchasePriceLabel.SetText(funds.PurchasePriceFormat())
+	m.FundsValueLabel.SetText(funds.ValueFormat())
+	m.FundsProfitLossLabel.SetText(funds.ProfitLossFormat())
+}
+
+func (m *MainForm) shutDown() {
+	fmt.Println("Cleanup!")
+	if m.FundList != nil {
+		m.FundList.Destroy()
+		m.FundList = nil
+	}
+
+	if m.ToolbarQuit != nil {
+		m.ToolbarQuit.Destroy()
+	}
+	if m.ToolbarRefresh != nil {
+		m.ToolbarRefresh.Destroy()
+	}
+	if m.FundsProfitLossLabel != nil {
+		m.FundsProfitLossLabel.Destroy()
+	}
+	if m.FundsPurchasePriceLabel != nil {
+		m.FundsPurchasePriceLabel.Destroy()
+	}
+	if m.FundsValueLabel != nil {
+		m.FundsValueLabel.Destroy()
+	}
+	if m.AboutDialog != nil {
+		m.AboutDialog.Destroy()
+	}
+	if m.TreeView !=nil {
+		m.TreeView.Destroy()
+	}
+
+	if m.Window!=nil {
+		m.Window.Destroy()
+	}
 }

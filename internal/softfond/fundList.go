@@ -10,44 +10,33 @@ import (
 )
 
 type fundList struct {
-	mainForm  *MainForm
-	listStore *gtk.ListStore
-	funds     *data.Funds
+	Funds *data.Funds
+	TreeView *gtk.TreeView
+	ListStore *gtk.ListStore
 }
 
 // fundListNew : Creates a new fundList struct
-func fundListNew(mainForm *MainForm) *fundList {
+func fundListNew(funds *data.Funds, treeView *gtk.TreeView) *fundList {
 	f := new(fundList)
-	f.mainForm = mainForm
+	f.TreeView = treeView
+	f.Funds = funds
 
-	f.loadFunds()
+	f.setupColumns()
+	f.refreshFundList()
 
 	return f
-}
-
-func (f *fundList) loadFunds() {
-	funds := data.FundsNew()
-
-	// Load
-	err := funds.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	f.funds = funds
 }
 
 func (f *fundList) updateFundsValue() {
 
 	go func() {
 		morningStar := morningstar.New()
-		for _, fund := range f.funds.List {
+		for _, fund := range f.Funds.List {
 			morningStar.GetFundRate(fund)
 		}
 
-		f.funds.CalculateFundsTotalValue()
-
-		f.funds.Save()
+		f.Funds.CalculateFundsTotalValue()
+		f.Funds.Save()
 
 		f.refreshFundList()
 	}()
@@ -58,12 +47,12 @@ func (f *fundList) updateFundsValue() {
 func (f *fundList) refreshFundList() {
 	var err error
 
-	if f.listStore != nil {
-		f.listStore.Clear()
+	if f.ListStore != nil {
+		f.ListStore.Clear()
 	}
 
-	f.mainForm.TreeView.SetModel(nil)
-	f.listStore, err = gtk.ListStoreNew(
+	f.TreeView.SetModel(nil)
+	f.ListStore, err = gtk.ListStoreNew(
 		glib.TYPE_STRING, // Fund name
 		glib.TYPE_STRING, // Fund value
 		gdk.PixbufGetType(),
@@ -76,11 +65,11 @@ func (f *fundList) refreshFundList() {
 		log.Fatal(err)
 	}
 
-	for _, fund := range f.funds.List {
-		f.addFundToList(fund, f.listStore)
+	for _, fund := range f.Funds.List {
+		f.addFundToList(fund, f.ListStore)
 	}
 
-	f.mainForm.TreeView.SetModel(f.listStore)
+	f.TreeView.SetModel(f.ListStore)
 }
 
 func (f *fundList) addFundToList(fund *data.Fund, listStore *gtk.ListStore) {
@@ -105,12 +94,12 @@ func (f *fundList) addFundToList(fund *data.Fund, listStore *gtk.ListStore) {
 // setupColumns : Sets up the listview columns
 func (f *fundList) setupColumns() {
 	helper := new(treeviewHelper)
-	f.mainForm.TreeView.AppendColumn(helper.createTextColumn("Fondnamn", columnName, columnNameWidth))
-	f.mainForm.TreeView.AppendColumn(helper.createTextColumn("Värde", columnValue, columnValueWidth))
-	f.mainForm.TreeView.AppendColumn(helper.createImageColumn("Lång", columnTrend, columnTrendWidth))
-	f.mainForm.TreeView.AppendColumn(helper.createTextColumn("Långtids V/F", columnProfitLoss, columnProfitLossWidth))
-	f.mainForm.TreeView.AppendColumn(helper.createImageColumn("Kort", columnShortTermTrend, columnShortTermTrendWidth))
-	f.mainForm.TreeView.AppendColumn(helper.createTextColumn("Korttids V/F", columnShortTermProfitLoss, columnShortTermProfitLossWidth))
+	f.TreeView.AppendColumn(helper.createTextColumn("Fondnamn", columnName, columnNameWidth))
+	f.TreeView.AppendColumn(helper.createTextColumn("Värde", columnValue, columnValueWidth))
+	f.TreeView.AppendColumn(helper.createImageColumn("Lång", columnTrend, columnTrendWidth))
+	f.TreeView.AppendColumn(helper.createTextColumn("Långtids V/F", columnProfitLoss, columnProfitLossWidth))
+	f.TreeView.AppendColumn(helper.createImageColumn("Kort", columnShortTermTrend, columnShortTermTrendWidth))
+	f.TreeView.AppendColumn(helper.createTextColumn("Korttids V/F", columnShortTermProfitLoss, columnShortTermProfitLossWidth))
 }
 
 func (f *fundList) getTrendImageColumn(fund *data.Fund, shortTerm bool) *gdk.Pixbuf {
@@ -165,4 +154,10 @@ func (f *fundList) getProfitLossColumn(fund *data.Fund, shortTerm bool) string {
 		}
 		return `<span font="Sans 14"><span foreground="#FF0000">` + fund.ProfitLossPercentFormat() + `</span></span>`
 	}
+}
+
+func (f *fundList) Destroy() {
+	f.TreeView = nil
+	f.Funds = nil
+	f.ListStore = nil
 }
