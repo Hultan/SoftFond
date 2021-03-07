@@ -122,7 +122,7 @@ func (f *fundList) getTrendImageColumn(fund *data.Fund, shortTerm bool) *gdk.Pix
 	}
 
 	thumbnailPath = tools.GetResourcePath(thumbnailPath)
-	
+
 	thumbnail, err := gdk.PixbufNewFromFile(thumbnailPath)
 	if err != nil {
 		log.Fatal(err)

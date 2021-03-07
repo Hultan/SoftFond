@@ -10,9 +10,9 @@
       "Shares": 42.9074,
       "PurchasePrice": 20000,
       "TodaysRate": 382.43,
-      "TodaysUpdateTime": "2021-03-06T08:48:03.919564368+01:00",
-      "YesterdaysRate": 387.2,
-      "YesterdaysUpdateTime": "2021-03-05T18:37:30.053774999+01:00"
+      "TodaysUpdateTime": "2021-03-07T12:38:19.831694407+01:00",
+      "YesterdaysRate": 382.43,
+      "YesterdaysUpdateTime": "2021-03-06T08:48:03.919564368+01:00"
     },
     {
       "Id": 1,
@@ -24,9 +24,9 @@
       "Shares": 10.4571,
       "PurchasePrice": 20000,
       "TodaysRate": 1742.21,
-      "TodaysUpdateTime": "2021-03-06T08:48:04.159552505+01:00",
-      "YesterdaysRate": 1776.13,
-      "YesterdaysUpdateTime": "2021-03-05T18:37:30.4453772+01:00"
+      "TodaysUpdateTime": "2021-03-07T12:38:20.037484097+01:00",
+      "YesterdaysRate": 1742.21,
+      "YesterdaysUpdateTime": "2021-03-06T08:48:04.159552505+01:00"
     },
     {
       "Id": 2,
@@ -38,9 +38,9 @@
       "Shares": 343.112,
       "PurchasePrice": 20000,
       "TodaysRate": 54.59,
-      "TodaysUpdateTime": "2021-03-06T08:48:04.417986751+01:00",
-      "YesterdaysRate": 54.7,
-      "YesterdaysUpdateTime": "2021-03-05T18:37:31.222330313+01:00"
+      "TodaysUpdateTime": "2021-03-07T12:38:20.331533756+01:00",
+      "YesterdaysRate": 54.59,
+      "YesterdaysUpdateTime": "2021-03-06T08:48:04.417986751+01:00"
     },
     {
       "Id": 3,
@@ -52,9 +52,9 @@
       "Shares": 556.502,
       "PurchasePrice": 20000,
       "TodaysRate": 33.13,
-      "TodaysUpdateTime": "2021-03-06T08:48:04.756571923+01:00",
-      "YesterdaysRate": 33.26,
-      "YesterdaysUpdateTime": "2021-03-05T18:37:32.421938167+01:00"
+      "TodaysUpdateTime": "2021-03-07T12:38:20.638093677+01:00",
+      "YesterdaysRate": 33.13,
+      "YesterdaysUpdateTime": "2021-03-06T08:48:04.756571923+01:00"
     },
     {
       "Id": 4,
@@ -66,12 +66,12 @@
       "Shares": 237.897,
       "PurchasePrice": 20000,
       "TodaysRate": 78,
-      "TodaysUpdateTime": "2021-03-06T08:48:07.201107714+01:00",
-      "YesterdaysRate": 77.86,
-      "YesterdaysUpdateTime": "2021-03-05T18:37:32.703083875+01:00"
+      "TodaysUpdateTime": "2021-03-07T12:38:20.858378349+01:00",
+      "YesterdaysRate": 78,
+      "YesterdaysUpdateTime": "2021-03-06T08:48:07.201107714+01:00"
     }
   ],
   "TotalPurchasePrice": 100000,
-  "TotalValue": 91974.96417800001,
-  "ProfitLossPercent": -8.025035821999992
+  "TotalValue": 90350.90251300001,
+  "TotalProfitLossPercent": -9.649097486999992
 }

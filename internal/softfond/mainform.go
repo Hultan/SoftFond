@@ -45,7 +45,7 @@ func (m *MainForm) OpenMainForm(app *gtk.Application) {
 	m.hookUpSignals()
 
 	// Menu
-	m.setupMenu(m.Window)
+	m.setupMenu()
 
 	// Funds
 	m.loadFunds()
@@ -153,7 +153,10 @@ func (m *MainForm) hookUpSignals() {
 	}
 
 	// Hook up the toolbar refresh button clicked signal
-	_, err = m.ToolbarRefresh.Connect("clicked", m.FundList.updateFundsValue)
+	//_, err = m.ToolbarRefresh.Connect("clicked", m.FundList.updateFundsValue)
+	_, err = m.ToolbarRefresh.Connect("clicked", func() {
+		m.FundList.updateFundsValue()
+	})
 	if err != nil {
 		log.Println("Failed to connect the toolbar_refresh.clicked event")
 		log.Fatal(err)
@@ -173,7 +176,7 @@ func (m *MainForm) loadFunds() {
 	m.Funds.CalculateFundsTotalValue()
 }
 
-func (m *MainForm) setupMenu(window *gtk.ApplicationWindow) {
+func (m *MainForm) setupMenu() {
 	menuQuit, err := m.Helper.GetMenuItem("menu_file_quit")
 	if err != nil {
 		log.Println("failed to find menu item menu_file_quit")
