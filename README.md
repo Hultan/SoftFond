@@ -1,0 +1,1 @@
+SoftFond - Checks fonddata
