@@ -3,6 +3,7 @@ package data
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/hultan/softfond/internal/tools"
 	"io/ioutil"
 )
 
@@ -21,7 +22,7 @@ func FundsNew() *Funds {
 
 // Load : Load funds from a json file
 func (f *Funds) Load() error {
-	bytes, err := ioutil.ReadFile("config/funds.json")
+	bytes, err := ioutil.ReadFile(tools.GetResourcePath("config/funds.json"))
 	if err != nil {
 		return err
 	}

@@ -3,7 +3,7 @@ package softfond
 const (
 	applicationDescription = "SoftFond hämtar fonddata från internet..."
 	applicationTitle       = "SoftFond"
-	applicationVersion     = "Version 0.1.0"
+	applicationVersion     = "Version 1.0.0"
 	applicationCopyRight   = "© SoftTeam AB, 2021"
 )
 

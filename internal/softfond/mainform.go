@@ -1,7 +1,6 @@
 package softfond
 
 import (
-	"fmt"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/hultan/softfond/internal/data"
@@ -69,7 +68,7 @@ func (m *MainForm) createHelper() *gtkHelper.GtkHelper {
 }
 
 func (m *MainForm) createGuilder() *gtk.Builder {
-	builder, err := gtk.BuilderNewFromFile(tools.GetResourcePath("../assets", "main.glade"))
+	builder, err := gtk.BuilderNewFromFile(tools.GetResourcePath("assets/main.glade"))
 	if err != nil {
 		log.Println("Failed to create builder")
 		log.Fatal(err)
@@ -242,7 +241,6 @@ func (m *MainForm) updateTotals(funds *data.Funds) {
 }
 
 func (m *MainForm) shutDown() {
-	fmt.Println("Cleanup!")
 	if m.FundList != nil {
 		m.FundList.Destroy()
 		m.FundList = nil

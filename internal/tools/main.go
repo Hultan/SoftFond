@@ -1,9 +1,6 @@
 package tools
 
 import (
-	"os"
-	"path"
-	"path/filepath"
 	"strings"
 )
 
@@ -33,18 +30,4 @@ func GetFirstNumberPosition(text string) int {
 		return i+1
 	}
 	return -1
-}
-
-// GetResourcePath : Gets the path to a resource file
-func GetResourcePath(directory, file string) string {
-	return path.Join(GetExecutablePath(), directory, file)
-}
-
-// GetExecutablePath : Returns the path of the executable
-func GetExecutablePath() string {
-	executable, err := os.Executable()
-	if err != nil {
-		return ""
-	}
-	return filepath.Dir(executable)
 }
