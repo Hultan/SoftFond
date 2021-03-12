@@ -153,9 +153,11 @@ func (m *MainForm) hookUpSignals() {
 	}
 
 	// Hook up the toolbar refresh button clicked signal
+	// For some reason this does not work, see : https://forum.golangbridge.org/t/reciever-nil-problem/22708/3
 	//_, err = m.ToolbarRefresh.Connect("clicked", m.FundList.updateFundsValue)
 	_, err = m.ToolbarRefresh.Connect("clicked", func() {
 		m.FundList.updateFundsValue()
+		m.updateTotals(m.Funds)
 	})
 	if err != nil {
 		log.Println("Failed to connect the toolbar_refresh.clicked event")
