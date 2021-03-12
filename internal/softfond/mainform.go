@@ -47,7 +47,7 @@ func (m *MainForm) OpenMainForm(app *gtk.Application) {
 	// Menu
 	m.setupMenu()
 
-	// Funds
+	// Funds  
 	m.loadFunds()
 	m.FundList = fundListNew(m.Funds, m.TreeView)
 	m.updateTotals(m.Funds)
