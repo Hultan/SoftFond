@@ -5,7 +5,6 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/hultan/softfond/internal/data"
 	"github.com/hultan/softfond/internal/tools"
-	gtkHelper "github.com/hultan/softteam-tools/pkg/gtk-helper"
 	"github.com/hultan/softteam-tools/pkg/resources"
 	"log"
 	"os"
@@ -13,7 +12,7 @@ import (
 
 type MainForm struct {
 	Window                  *gtk.ApplicationWindow
-	Helper                  *gtkHelper.GtkHelper
+	builder                  *tools.SoftBuilder
 	TreeView                *gtk.TreeView
 	AboutDialog             *gtk.AboutDialog
 	FundsValueLabel         *gtk.Label
@@ -37,8 +36,8 @@ func (m *MainForm) OpenMainForm(app *gtk.Application) {
 	// Initialize gtk
 	gtk.Init(&os.Args)
 
-	// Create a new gtk helper
-	m.Helper = m.createHelper()
+	// Create a new softBuilder
+	m.builder = tools.NewSoftBuilder("main.glade")
 
 	// Controls & signals
 	m.getControls()
@@ -57,84 +56,33 @@ func (m *MainForm) OpenMainForm(app *gtk.Application) {
 	m.Window.SetTitle(applicationTitle + " " + applicationVersion)
 
 	// CleanUp
-	m.Helper = nil
+	m.builder = nil
 
 	// Show the main window
 	m.Window.ShowAll()
 }
 
-func (m *MainForm) createHelper() *gtkHelper.GtkHelper {
-	return gtkHelper.GtkHelperNew(m.createGuilder())
-}
-
-func (m *MainForm) createGuilder() *gtk.Builder {
-	builder, err := gtk.BuilderNewFromFile(tools.GetResourcePath("assets/main.glade"))
-	if err != nil {
-		log.Println("Failed to create builder")
-		log.Fatal(err)
-	}
-	return builder
-}
-
 func (m *MainForm) getControls() {
 	// Get the main window from the glade file
-	window, err := m.Helper.GetApplicationWindow("main_window")
-	if err != nil {
-		log.Println("Failed to find main_window")
-		log.Fatal(err)
-	}
-	m.Window = window
+	m.Window = m.builder.GetObject("main_window").(*gtk.ApplicationWindow)
 
 	// Status bar
-	statusBar, err := m.Helper.GetStatusBar("main_window_status_bar")
-	if err != nil {
-		log.Println("Failed to find main_window_status_bar")
-		log.Fatal(err)
-	}
+	statusBar := m.builder.GetObject("main_window_status_bar").(*gtk.Statusbar)
 	statusBar.Push(statusBar.GetContextId(applicationTitle), applicationTitle+" "+applicationVersion+", "+applicationCopyRight)
 
 	// Get the tree view
-	treeView, err := m.Helper.GetTreeView("fund_treeview")
-	if err != nil {
-		log.Fatal(err)
-	}
-	m.TreeView = treeView
+	m.TreeView = m.builder.GetObject("fund_treeview").(*gtk.TreeView)
 
 	// Labels
-	label, err := m.Helper.GetLabel("total_purchase_price_value")
-	if err != nil {
-		log.Println("Failed to find total_purchase_price_value")
-		log.Fatal(err)
-	}
-	m.FundsPurchasePriceLabel = label
-	label, err = m.Helper.GetLabel("total_value")
-	if err != nil {
-		log.Println("Failed to find total_value")
-		log.Fatal(err)
-	}
-	m.FundsValueLabel = label
-	label, err = m.Helper.GetLabel("total_profit_loss_value")
-	if err != nil {
-		log.Println("Failed to find total_profit_loss_value")
-		log.Fatal(err)
-	}
-	m.FundsProfitLossLabel = label
+	m.FundsPurchasePriceLabel = m.builder.GetObject("total_purchase_price_value").(*gtk.Label)
+	m.FundsValueLabel = m.builder.GetObject("total_value").(*gtk.Label)
+	m.FundsProfitLossLabel = m.builder.GetObject("total_profit_loss_value").(*gtk.Label)
 
 	// Toolbar quit button
-	button, err := m.Helper.GetToolButton("toolbar_quit")
-	if err != nil {
-		log.Println("Failed to find toolbar_quit")
-		log.Fatal(err)
-	}
-	m.ToolbarQuit = button
+	m.ToolbarQuit = m.builder.GetObject("toolbar_quit").(*gtk.ToolButton)
 
 	// Toolbar refresh button
-	button, err = m.Helper.GetToolButton("toolbar_refresh")
-	if err != nil {
-		log.Println("Failed to find toolbar_refresh")
-		log.Fatal(err)
-	}
-	m.ToolbarRefresh = button
+	m.ToolbarRefresh = m.builder.GetObject("toolbar_refresh").(*gtk.ToolButton)
 }
 
 func (m *MainForm) hookUpSignals() {
@@ -179,18 +127,14 @@ func (m *MainForm) loadFunds() {
 }
 
 func (m *MainForm) setupMenu() {
-	menuQuit, err := m.Helper.GetMenuItem("menu_file_quit")
-	if err != nil {
-		log.Println("failed to find menu item menu_file_quit")
-		log.Fatal(err)
-	}
-	_, err = menuQuit.Connect("activate", m.shutDown)
+	menuQuit := m.builder.GetObject("menu_file_quit").(*gtk.MenuItem)
+	_, err := menuQuit.Connect("activate", m.shutDown)
 	if err != nil {
 		log.Println("failed to connect menu_file_quit.activate signal")
 		log.Fatal(err)
 	}
 
-	menuHelpAbout, err := m.Helper.GetMenuItem("menu_help_about")
+	menuHelpAbout := m.builder.GetObject("menu_help_about").(*gtk.MenuItem)
 	if err != nil {
 		log.Println("failed to find menu item menu_help_about")
 		log.Fatal(err)
@@ -204,11 +148,7 @@ func (m *MainForm) setupMenu() {
 
 func (m *MainForm) openAboutDialog() {
 	if m.AboutDialog == nil {
-		about, err := m.Helper.GetAboutDialog("about_dialog")
-		if err != nil {
-			log.Println("failed to find dialog about_dialog")
-			log.Fatal(err)
-		}
+		about := m.builder.GetObject("about_dialog").(*gtk.AboutDialog)
 		about.SetDestroyWithParent(true)
 		about.SetTransientFor(m.Window)
 		about.SetProgramName(applicationTitle)

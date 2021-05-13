@@ -104,24 +104,27 @@ func (f *fundList) setupColumns() {
 }
 
 func (f *fundList) getTrendImageColumn(fund *data.Fund, shortTerm bool) *gdk.Pixbuf {
-	var thumbnailPath string = "assets/trend_up.png"
+	var thumbnailPath string = "trend_up.png"
 
 	if shortTerm {
 		if fund.ShortTermProfitLossPercent() == 0 {
-			thumbnailPath = "assets/trend_none.png"
+			thumbnailPath = "trend_none.png"
 		} else if fund.ShortTermProfitLossPercent() < 0 {
-			thumbnailPath = "assets/trend_down.png"
+			thumbnailPath = "trend_down.png"
 		}
 
 	} else {
 		if fund.ProfitLossPercent() == 0 {
-			thumbnailPath = "assets/trend_none.png"
+			thumbnailPath = "trend_none.png"
 		} else if fund.ProfitLossPercent() < 0 {
-			thumbnailPath = "assets/trend_down.png"
+			thumbnailPath = "trend_down.png"
 		}
 	}
 
-	thumbnailPath = tools.GetResourcePath(thumbnailPath)
+	thumbnailPath, err := tools.GetAssetsPath(thumbnailPath)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	thumbnail, err := gdk.PixbufNewFromFile(thumbnailPath)
 	if err != nil {

@@ -9,10 +9,10 @@
       "FundIdentifier": "F00000UI2B",
       "Shares": 42.9074,
       "PurchasePrice": 20000,
-      "TodaysRate": 396.61,
-      "TodaysUpdateTime": "2021-03-11T12:48:02.737927265+01:00",
-      "YesterdaysRate": 386.08,
-      "YesterdaysUpdateTime": "2021-03-10T19:38:31.885834602+01:00"
+      "TodaysRate": 362.57,
+      "TodaysUpdateTime": "2021-05-13T15:09:04.603900472+02:00",
+      "YesterdaysRate": 403.87,
+      "YesterdaysUpdateTime": "2021-03-12T14:58:19.276452619+01:00"
     },
     {
       "Id": 1,
@@ -23,10 +23,10 @@
       "FundIdentifier": "F0GBR04KDE",
       "Shares": 10.4571,
       "PurchasePrice": 20000,
-      "TodaysRate": 1785.31,
-      "TodaysUpdateTime": "2021-03-11T12:48:03.047374757+01:00",
-      "YesterdaysRate": 1775.68,
-      "YesterdaysUpdateTime": "2021-03-10T19:38:32.063294794+01:00"
+      "TodaysRate": 1737.48,
+      "TodaysUpdateTime": "2021-05-13T15:09:04.939128866+02:00",
+      "YesterdaysRate": 1816.48,
+      "YesterdaysUpdateTime": "2021-03-12T14:58:19.552054171+01:00"
     },
     {
       "Id": 2,
@@ -37,10 +37,10 @@
       "FundIdentifier": "F0GBR04LSC",
       "Shares": 343.112,
       "PurchasePrice": 20000,
-      "TodaysRate": 55.28,
-      "TodaysUpdateTime": "2021-03-11T12:48:04.948896683+01:00",
-      "YesterdaysRate": 55.12,
-      "YesterdaysUpdateTime": "2021-03-10T19:38:32.277148541+01:00"
+      "TodaysRate": 56.84,
+      "TodaysUpdateTime": "2021-05-13T15:09:05.212154658+02:00",
+      "YesterdaysRate": 55.98,
+      "YesterdaysUpdateTime": "2021-03-12T14:58:19.820560435+01:00"
     },
     {
       "Id": 3,
@@ -51,10 +51,10 @@
       "FundIdentifier": "F00001476G",
       "Shares": 556.502,
       "PurchasePrice": 20000,
-      "TodaysRate": 34.01,
-      "TodaysUpdateTime": "2021-03-11T12:48:05.447082769+01:00",
-      "YesterdaysRate": 34.01,
-      "YesterdaysUpdateTime": "2021-03-10T19:38:32.461231244+01:00"
+      "TodaysRate": 34.65,
+      "TodaysUpdateTime": "2021-05-13T15:09:06.403810783+02:00",
+      "YesterdaysRate": 34.3,
+      "YesterdaysUpdateTime": "2021-03-12T14:58:21.952295991+01:00"
     },
     {
       "Id": 4,
@@ -65,13 +65,13 @@
       "FundIdentifier": "F0GBR04LRU",
       "Shares": 237.897,
       "PurchasePrice": 20000,
-      "TodaysRate": 76.56,
-      "TodaysUpdateTime": "2021-03-11T12:48:05.729792468+01:00",
-      "YesterdaysRate": 76.56,
-      "YesterdaysUpdateTime": "2021-03-10T19:38:32.742539773+01:00"
+      "TodaysRate": 72.69,
+      "TodaysUpdateTime": "2021-05-13T15:09:06.726368199+02:00",
+      "YesterdaysRate": 78.38,
+      "YesterdaysUpdateTime": "2021-03-12T14:58:22.211894678+01:00"
     }
   ],
   "TotalPurchasePrice": 100000,
-  "TotalValue": 91793.927815,
-  "TotalProfitLossPercent": -8.206072184999996
+  "TotalValue": 89803.951436,
+  "TotalProfitLossPercent": -10.196048563999994
 }

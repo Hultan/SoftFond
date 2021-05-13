@@ -22,7 +22,11 @@ func FundsNew() *Funds {
 
 // Load : Load funds from a json file
 func (f *Funds) Load() error {
-	bytes, err := ioutil.ReadFile(tools.GetResourcePath("config/funds.json"))
+	path , err := tools.GetConfigPath("funds.json")
+	if err != nil {
+		return err
+	}
+	bytes, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err
 	}
