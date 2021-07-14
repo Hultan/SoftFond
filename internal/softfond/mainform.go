@@ -48,7 +48,7 @@ func (m *MainForm) OpenMainForm(app *gtk.Application) {
 
 	// Funds
 	m.loadFunds()
-	m.FundList = fundListNew(m.Funds, m.TreeView)
+	m.FundList = fundListNew(m.Funds, m.TreeView, m)
 	m.updateTotals(m.Funds)
 
 	// Set up main window
@@ -106,6 +106,7 @@ func (m *MainForm) hookUpSignals() {
 	_, err = m.ToolbarRefresh.Connect("clicked", func() {
 		m.FundList.updateFundsValue()
 		m.updateTotals(m.Funds)
+
 	})
 	if err != nil {
 		log.Println("Failed to connect the toolbar_refresh.clicked event")

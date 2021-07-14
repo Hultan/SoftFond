@@ -11,16 +11,18 @@ import (
 )
 
 type fundList struct {
-	Funds *data.Funds
-	TreeView *gtk.TreeView
+	Funds     *data.Funds
+	TreeView  *gtk.TreeView
 	ListStore *gtk.ListStore
+	MainForm  *MainForm
 }
 
 // fundListNew : Creates a new fundList struct
-func fundListNew(funds *data.Funds, treeView *gtk.TreeView) *fundList {
+func fundListNew(funds *data.Funds, treeView *gtk.TreeView, mainForm *MainForm) *fundList {
 	f := new(fundList)
 	f.TreeView = treeView
 	f.Funds = funds
+	f.MainForm = mainForm
 
 	f.setupColumns()
 	f.refreshFundList()
@@ -40,6 +42,7 @@ func (f *fundList) updateFundsValue() {
 		f.Funds.Save()
 
 		f.refreshFundList()
+		f.MainForm.updateTotals(f.Funds)
 	}()
 
 }
